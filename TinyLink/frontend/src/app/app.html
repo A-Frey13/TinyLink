@@ -1,0 +1,91 @@
+<main class="page">
+  <section class="card hero">
+    <p class="eyebrow">tiny-link</p>
+    <h1>URL shortening with expiry, analytics and Redis backed caching</h1>
+    <p class="lead">
+      Create short URLs, open redirects, and inspect click analytics from one screen
+    </p>
+    <div class="explain">
+      <p>
+        <strong>Rate-limit requests:</strong> counts how many API requests one client/IP makes
+        within a short time window
+      </p>
+      <p>
+        <strong>Url clicks:</strong> counts how many times a short link is opened and redirected.
+      </p>
+    </div>
+  </section>
+  <section class="grid">
+    <article class="card">
+      <h2>Create short URL</h2>
+      <form [formGroup]="form" (ngSubmit)="shortenUrl()">
+        <label>
+          Original URL
+          <input formControlName="originalUrl" placeholder="https://example.com/very/long/url" />
+        </label>
+        <label>
+          Custom alias
+          <input formControlName="customAlias" placeholder="optional-code" />
+        </label>
+
+        <label>
+          Expires at
+          <input formControlName="expiresAt" type="datetime-local" />
+        </label>
+
+        <button type="submit" [disabled]="loading() || form.invalid">
+          {{ loading() ? 'Creating..' : 'Shorten URL' }}
+        </button>
+      </form>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      @if (result(); as result) {
+        <div class="result">
+          <p>
+            <strong>Short URL:</strong>
+            <a [href]="result.shortUrl" target="_blank" rel="noreferrer">
+              {{ result.shortUrl }}
+            </a>
+          </p>
+          <p>
+            <strong>Short code:</strong>
+            {{ result.shortCode }}
+          </p>
+          <p>
+            <strong>Created:</strong>
+            {{ result.createdAt | date: 'medium' }}
+          </p>
+        </div>
+      }
+    </article>
+
+    <article class="card">
+      <h2>Get URL stats</h2>
+      <form [formGroup]="statsForm" (ngSubmit)="loadStats()">
+        <label>
+          Short code
+          <input formControlName="shortCode" placeholder="abc123" />
+        </label>
+
+        <button type="submit" [disabled]="statsLoading() || statsForm.invalid">
+          {{ statsLoading() ? 'Loading...' : 'Fetch stats' }}
+        </button>
+      </form>
+
+      @if (statsError()) {
+        <p class="error">{{ statsError() }}</p>
+      }
+
+      @if (stats(); as stats) {
+        <div class="result">
+          <p><strong>Original URL:</strong> {{ stats.originalUrl }}</p>
+          <p><strong>Clicks:</strong> {{ stats.clickCount }}</p>
+          <p><strong>Active:</strong> {{ stats.active ? 'Yes' : 'No' }}</p>
+          <p><strong>Created by:</strong> {{ stats.createdBy }}</p>
+        </div>
+      }
+    </article>
+  </section>
+</main>

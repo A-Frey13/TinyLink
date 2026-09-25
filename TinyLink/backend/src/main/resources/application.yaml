@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: tinylink
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+server:
+  port: 8080
+
+tinylink:
+  base-url: http://localhost:8080
+  short-code:
+    length: 6
+    max-attempts: 10
+  rate-limit:
+    requests-per-minute: 2
+    requests-per-hour: 10
+  cache:
+    ttl-minutes: 30
+  cleanup:
+    interval-minutes: 1
+    expired-urls-batch-size: 100
+
+logging:
+  level:
+    com.shahbytes.tinylink: DEBUG
+    org.springframework.data.redis: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
